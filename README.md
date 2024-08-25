@@ -10,10 +10,6 @@ This repository contains a set of Python scripts designed to manage and process 
   - [print_schemas.py](#3-print_schemaspy)
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Usage](#usage)
-  - [Running `modify_schema.py`](#running-modify_schemapy)
-  - [Running `combine_datasets.py`](#running-combine_datasetspy)
-  - [Running `print_schemas.py`](#running-print_schemaspy)
 - [License](#license)
 - [Contact](#contact)
 
@@ -27,6 +23,7 @@ This script modifies the schema of a Parquet file to match the schema of another
 **Usage**:  
 ```bash
 python modify_schema.py [INPUT_FILE_PATH] [REFERENCE_FILE_PATH] [OUTPUT_FILE_PATH]
+```
 
 **Parameters**:
 - `INPUT_FILE_PATH`: The path to the Parquet file whose schema you want to modify.
@@ -36,6 +33,7 @@ python modify_schema.py [INPUT_FILE_PATH] [REFERENCE_FILE_PATH] [OUTPUT_FILE_PAT
 **Example**:
 ```bash
 python modify_schema.py datasets/yellow_tripdata_2023-01.parquet datasets/yellow_tripdata_2023-02.parquet datasets/yellow_tripdata_2023-01_modified.parquet
+```
 
 ### 2. `combine_datasets.py`
 
@@ -45,6 +43,7 @@ This script combines multiple Parquet files into a single dataset. It processes 
 **Usage**:  
 ```bash
 python combine_datasets.py [INPUT_DIRECTORY] [OUTPUT_FILE_NAME]
+```
 
 **Parameters**:
 - `INPUT_DIRECTORY`: Directory containing the Parquet files to be combined.
@@ -53,7 +52,48 @@ python combine_datasets.py [INPUT_DIRECTORY] [OUTPUT_FILE_NAME]
 **Example**:
 ```bash
 python combine_datasets.py datasets/yellow_tripdata/ combined_datasets/yellow_tripdata_2023.parquet
+```
 
+### 3. `print_schemas.py`
 
-give me markdown for Parameters and example (as above)
+**Description**:  
+This script prints the schema of all Parquet files in a given directory. It is useful for quickly inspecting the structure of multiple datasets, helping you understand the data before performing further processing.
 
+**Usage**:  
+```bash
+python print_schemas.py [DIRECTORY_PATH]
+```
+**Parameters**:
+- `DIRECTORY_PATH`: Directory containing the Parquet files whose schemas need to be printed.
+
+**Example**:
+```bash
+python print_schemas.py datasets/yellow_tripdata/
+```
+
+## Requirements
+
+- Python 3.x
+- PySpark
+- Pandas (for any Pandas-based operations)
+
+## Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/naumencumihai/data-cleaning-services.git
+   cd data-processing-services
+   ```
+
+2. **Install the required Python packages**:
+    ```bash
+    pip install pyspark pandas
+    ```
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any questions or issues, please open an issue on the GitHub repository or contact the author at [naumencumihai@gmail.com].
