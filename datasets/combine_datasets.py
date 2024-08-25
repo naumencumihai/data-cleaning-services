@@ -8,9 +8,9 @@ def combine_parquet_files(input_dir, output_file):
         .appName("Combine Parquet Files") \
         .master("local[*]") \
         .config("spark.executor.extraJavaOptions", "-XX:+UseG1GC -XX:InitiatingHeapOccupancyPercent=35") \
-        .config("spark.driver.memory", "4g") \
-        .config("spark.executor.memory", "4g") \
-        .config("spark.driver.maxResultSize", "2g") \
+        .config("spark.driver.memory", "16g") \
+        .config("spark.executor.memory", "8g") \
+        .config("spark.driver.maxResultSize", "4g") \
         .getOrCreate()
 
     if not os.path.isdir(input_dir):

@@ -8,6 +8,8 @@ This repository contains a set of Python scripts designed to manage and process 
   - [modify_schema.py](#1-modify_schemapy)
   - [combine_datasets.py](#2-combine_datasetspy)
   - [print_schemas.py](#3-print_schemaspy)
+  - [filter_parquet_fields.py](#4-filter_parquet_fieldspy)
+  - [convert_parquet_to_csv.py](#5-convert_parquet_to_csvpy)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [License](#license)
@@ -69,6 +71,45 @@ python print_schemas.py [DIRECTORY_PATH]
 **Example**:
 ```bash
 python print_schemas.py datasets/yellow_tripdata/
+```
+
+### 4. `filter_parquet_fields.py`
+
+**Description**:  
+This script filters a given dataset by 2 mentioned fields (it excludes the rest of them from the resulted Parquet dataset)
+
+**Usage**:  
+```bash
+python filter_parquet_fields.py [INPUT_PARQUET_PATH] [OUTPUT_PARQUET_PATH] [X_FIELD] [Y_FIELD]
+```
+**Parameters**:
+- `INPUT_PARQUET_PATH`: The path to the input Parquet file. This is the file from which you want to extract specific fields.
+- `OUTPUT_PARQUET_PATH`: The path where the output Parquet file will be saved. The output file will contain only the specified fields.
+- `X_FIELD`: The name of the first field (column) to be included in the output file.
+- `Y_FIELD`: The name of the second field (column) to be included in the output file.
+
+**Example**:
+```bash
+python filter_parquet_fields.py ./combined_datasets/yellow_tripdata_2023.parquet ./filtered_fields_datasets/yellow_tripdata_2023_distance_amount trip_distance total_amount
+```
+
+### 5. `convert_parquet_to_csv.py`
+
+**Description**:  
+This script converts a Parquet file to a CSV file.
+
+**Usage**:  
+```bash
+python convert_parquet_to_csv.py [INPUT_PARQUET_PATH] [OUTPUT_CSV_PATH] [OPTIONAL_PARTITIONS]
+```
+**Parameters**:
+- `INPUT_PARQUET_PATH`: The path to the input Parquet file that you want to convert.
+- `OUTPUT_CSV_PATH`: The path where the output CSV file will be saved. If multiple partitions are used, this will be the directory containing the part files.
+- `OPTIONAL_PARTITIONS`: (Optional) Number of partitions to use for the conversion. If not provided, the data will be written to a single CSV file.
+
+**Example**:
+```bash
+python convert_parquet_to_csv.py datasets/yellow_tripdata_2023-06.parquet output/yellow_tripdata_2023-06.csv 4
 ```
 
 ## Requirements
