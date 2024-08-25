@@ -22,8 +22,8 @@ public class OutlierDetectionDriver {
         Job job = Job.getInstance(conf, "Outlier Detection");
         job.setJarByClass(OutlierDetectionDriver.class);
 
-        job.setMapperClass(OutlierMapper.class);
-        job.setReducerClass(OutlierReducer.class);
+        job.setMapperClass(OutlierDetectionMapper.class);
+        job.setReducerClass(OutlierDetectionReducer.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);

@@ -4,7 +4,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class OutlierMapper extends Mapper<LongWritable, Text, Text, DoubleWritable> {
+public class OutlierDetectionMapper extends Mapper<LongWritable, Text, Text, DoubleWritable> {
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {

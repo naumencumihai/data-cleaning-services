@@ -4,7 +4,7 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class OutlierReducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
+public class OutlierDetectionReducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
 
     private double stddevThreshold;
 
