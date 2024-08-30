@@ -16,7 +16,7 @@ def convert_parquet_to_csv(input_parquet_path, output_csv_path, partitions=None)
         else:
             df = df.coalesce(1)
 
-        df.write.csv(output_csv_path, header=False)
+        df.write.csv(output_csv_path, header=True)
 
     finally:
         spark.stop()

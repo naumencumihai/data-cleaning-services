@@ -11,13 +11,16 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 public class OutlierDetectionDriver {
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 3) {
-            System.err.println("Usage: OutlierDetectionDriver [INPUT PATH] [OUTPUT PATH] [STANDARD DEVIATION THRESHOLD]");
+        if (args.length != 4) {
+            System.err.println("Usage: OutlierDetectionDriver [INPUT PATH] [OUTPUT PATH] [STDDEV THRESHOLD] [FIELD COLUMN NO]");
             System.exit(-1);
         }
 
+        // TODO output: Key = index, value = label
+
         Configuration conf = new Configuration();
         conf.set("stddev.threshold", args[2]);  // Pass the stddev threshold to the configuration
+        conf.set("field.no", args[3]); // Pass field no to the configuration
 
         Job job = Job.getInstance(conf, "Outlier Detection");
         job.setJarByClass(OutlierDetectionDriver.class);
@@ -26,7 +29,7 @@ public class OutlierDetectionDriver {
         job.setReducerClass(OutlierDetectionReducer.class);
 
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(DoubleWritable.class);
+        job.setOutputValueClass(Text.class);
 
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
