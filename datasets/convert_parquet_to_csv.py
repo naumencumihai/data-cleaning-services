@@ -6,6 +6,10 @@ def convert_parquet_to_csv(input_parquet_path, output_csv_path, partitions=None)
         .config("spark.driver.host", "localhost") \
         .appName("Parquet to CSV Converter") \
         .master("local[*]") \
+        .config("spark.executor.extraJavaOptions", "-XX:+UseG1GC -XX:InitiatingHeapOccupancyPercent=35") \
+        .config("spark.driver.memory", "16g") \
+        .config("spark.executor.memory", "8g") \
+        .config("spark.driver.maxResultSize", "4g") \
         .getOrCreate()
 
     try:
