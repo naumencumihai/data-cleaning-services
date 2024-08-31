@@ -15,7 +15,6 @@ def modify_schema(first_file, second_file, output_file):
     print(f"Original schema of {first_file}:")
     df1.printSchema()
 
-    # Target schema based on the second file
     target_schema = df2.schema
 
     # Cast the columns in df1 to match the types in df2
