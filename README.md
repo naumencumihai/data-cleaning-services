@@ -1,10 +1,14 @@
-# Data Processing Scripts
+# Data Cleaning Services
 
-This repository contains a set of Python scripts designed to manage and process large datasets in Parquet format using PySpark. The scripts included in this repository allow for schema modification, dataset combination, and schema inspection, making it easier to handle and analyze large-scale data.
+General Description of the entire project (TODO)
 
 ## Table of Contents
-
-- [Scripts Overview](#scripts-overview)
+- [AVF MapReduce Outlier Detection](#avf-mapreduce-outlier-detection)
+  - [outlier_detection.py](#1-outlier_detectionpy-script)
+  - [plot_outliers.py](#2-plot_outlierspy-script)
+- [Hadoop MapReduce Implementation](#hadoop-mapreduce-implementation)
+  - [recompile_java_mapreduce.py](#1-recompile_java_mapreducepy-tool)
+- [Data Processing Scripts Overview](#data-processing-scripts-overview)
   - [modify_schema.py](#1-modify_schemapy)
   - [combine_datasets.py](#2-combine_datasetspy)
   - [print_schemas.py](#3-print_schemaspy)
@@ -15,7 +19,112 @@ This repository contains a set of Python scripts designed to manage and process 
 - [License](#license)
 - [Contact](#contact)
 
-## Scripts Overview
+## AVF MapReduce Outlier Detection
+
+This project implements an Attribute Value Frequency (AVF) based outlier detection method using the Hadoop MapReduce framework. The AVF method identifies outliers in large datasets by analyzing the frequency of attribute values, considering values with low frequencies as potential outliers.
+
+Outlier detection is a critical task in data analysis, helping to identify anomalies or deviations that may indicate errors, fraud, or novel insights. The AVF method is an effective approach for detecting outliers based on the rarity of attribute values. This implementation leverages Hadoop MapReduce to efficiently process large datasets distributed across multiple nodes.
+
+### 1. `outlier_detection.py` script
+
+**Description**:  
+This script orchestrates the detection of outliers in a dataset using a two-phase MapReduce job. The script handles file preparation, uploads data to HDFS, runs the MapReduce jobs, and processes the results to generate a labeled CSV file indicating which data points are outliers.
+
+**Usage**:
+```bash
+python outlier_detection.py [HDFS_USER_PATH] [HDFS_INPUT_FILE_PATH | OPTIONAL: type SKIP if not available] [LOCAL_INPUT_FILE_PATH] [OUTPUT_DIR_NAME] [X_AXIS_FIELD] [Y_AXIS_FIELD] [FREQ_THRESHOLD | DEFAULT: 1]
+```
+
+**Parameters**:
+- `HDFS_USER_PATH`: The base path in HDFS where the input data is stored and the output will be saved.
+- `HDFS_INPUT_FILE_PATH`: The path to the input file in HDFS. If not available, use `SKIP` to generate the file from the local input.
+- `LOCAL_INPUT_FILE_PATH`: The path to the local input CSV file that needs to be processed. The file should be in a format suitable for MapReduce (indexed, no header).
+- `OUTPUT_DIR_NAME`: The name of the directory where the output will be stored. This directory will be created under the results folder.
+- `X_AXIS_FIELD`: The name of the column in the CSV file that represents the X-axis field for outlier detection.
+- `Y_AXIS_FIELD`: The name of the column in the CSV file that represents the Y-axis field for outlier detection.
+- `FREQ_THRESHOLD`: (Optional) The frequency threshold to determine whether a data point is an outlier. If not provided, the default value is 1.
+
+**Example**:
+```bash
+python outlier_detection.py /user/yourusername hdfs_input.csv ./local_input.csv results_directory trip_distance total_amount 2
+```
+
+This command will:
+1. Check if the input file in HDFS exists or if it needs to be generated from the local file.
+2. Upload the local input file to HDFS if necessary, and remove the header if it exists.
+3. Run the first MapReduce job to detect outliers for the `trip_distance` field.
+4. Run the second MapReduce job to detect outliers for the `total_amount` field.
+5. Retrieve the results from HDFS and save them locally under `results_directory`.
+6. Merge the results with the original data to create a final labeled CSV file indicating which records are outliers.
+
+**Note**:  
+Make sure the Hadoop environment is set up correctly, and the necessary Java MapReduce implementations are compiled and available in the specified paths.
+
+### 2. `plot_outliers.py` script
+
+**Description**:  
+This script generates scatter plots to visualize outliers and non-outliers in a dataset. It takes an input CSV file that contains labeled data points (outliers marked with 'OUT') and plots them in separate subplots. The script allows for sampling non-outliers to reduce processing time and save memory when dealing with large datasets.
+
+**Usage**:
+```bash
+python plot_outliers.py [INPUT_CSV_PATH] [X_FIELD] [Y_FIELD] [SAMPLE_SIZE]
+```
+
+**Parameters**:
+- `INPUT_CSV_PATH`: The path to the CSV file that contains the data to be plotted. The file should include an index, the X and Y fields, and a label column indicating outliers.
+- `X_FIELD`: The name of the column in the CSV file that represents the X-axis field.
+- `Y_FIELD`: The name of the column in the CSV file that represents the Y-axis field.
+- `SAMPLE_SIZE`: (Optional) The number of non-outlier data points to sample for plotting. If not provided, all non-outliers will be plotted.
+
+**Example**:
+```bash
+python plot_outliers.py ./results/labeled_result.csv trip_distance total_amount 100000
+```
+
+This command will:
+1. Read the `labeled_result.csv` file located in the `./results/` directory.
+2. Separate the data into outliers (labeled 'OUT') and non-outliers.
+3. Sample 10,000 non-outlier data points for plotting (if `SAMPLE_SIZE` is provided).
+4. Create two scatter plots:
+   - One for non-outliers (in blue).
+   - One for outliers (in red).
+5. Save the generated plots as `outliers_plot.png` in the same directory as the input CSV file.
+
+**Note**:  
+The script is designed to handle large datasets by sampling non-outliers. This approach reduces memory usage and improves plotting performance. The `SAMPLE_SIZE` parameter is optional but recommended for very large datasets.
+
+## Hadoop MapReduce Implementation
+
+### 1. `recompile_java_mapreduce.py` tool 
+
+**Description**:  
+This script automates the process of recompiling Java MapReduce implementations. It compiles the Mapper, Reducer, and Driver classes for a given implementation and packages them into a JAR file. The script takes the implementation name as an argument, ensures it is in camelCase or PascalCase format, and then generates a directory in snake_case where the compiled files are stored.
+
+**Usage**:
+```bash
+python recompile_java_mapreducer_implementation.py [IMPLEMENTATION_NAME]
+```
+
+**Parameters**:
+- `IMPLEMENTATION_NAME`: The name of the MapReduce implementation in camelCase or PascalCase format. This should correspond to the Java files you want to compile (e.g., `OutlierDetection`).
+
+**Example**:
+```bash
+python recompile_java_mapreducer_implementation.py AvfOutlierDetectionJob1
+```
+This command will:
+1. Verify that `AvfOutlierDetectionJob1` is in camelCase or PascalCase format.
+2. Convert `AvfOutlierDetectionJob1` to `avf_outlier_detection_job1` for the directory name.
+3. Compile the Java files `AvfOutlierDetectionJob1Mapper.java`, `AvfOutlierDetectionJob1Reducer.java`, and `AvfOutlierDetectionJob1Driver.java` located in the `avf_outlier_detection_job1` directory.
+4. Package the compiled classes into `avf_outlier_detection_job1/AvfOutlierDetectionJob1.jar`.
+
+**Note**:  
+Ensure that the Hadoop environment is properly set up and the `hadoop classpath` command is correctly configured in your system for the script to work effectively.
+
+## Data Processing Scripts Overview
+
+This repository contains a set of Python scripts designed to manage and process large datasets in Parquet format using PySpark. The scripts included in this repository allow for schema modification, dataset combination, and schema inspection, making it easier to handle and analyze large-scale data.
+
 
 ### 1. `modify_schema.py`
 
@@ -117,6 +226,8 @@ python convert_parquet_to_csv.py datasets/yellow_tripdata_2023-06.parquet output
 - Python 3.x
 - PySpark
 - Pandas (for any Pandas-based operations)
+- Apache Hadoop 3.x or later
+- Java Development Kit (JDK) 8 or later
 
 ## Installation
 
